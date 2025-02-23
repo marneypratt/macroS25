@@ -1,0 +1,357 @@
+---
+title: "macro_analysis_NAME"
+subtitle: "BIO 131 Project Data Analysis"
+author: "Your Name"
+date: "October , 2024"
+format: 
+  html:
+    code-overflow: wrap
+    embed-resources: true
+---
+
+# Getting Setup
+
+Keep all of your analysis in this same .qmd file and keep all the associated files in the project folder. Make sure the project name is showing in the upper right of the RStudio window.
+
+## Load packages
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+suppressPackageStartupMessages(
+  library(tidyverse)) ## for readr, dplyr, ggplot2
+library(ggbeeswarm) ## for jittering points (you can remove this is you did not use a dotplot)
+library(flextable) ## for making formatted tables that can be pasted into PowerPoint or Google Slides
+library(ggpubr) ## for making QQ-plots
+
+```
+
+## Import Data
+
+Figure out which data file(s) you need to import (see the metadata files for more information about each data file).
+
+Find the code you need by clicking on the "script_templates" folder then selecting the "importing_data" folder in the "Files" tab in the lower right area of RStudio.
+
+Copy and paste the code you need into the chunk below (Do **NOT** run the code directly from the script template, copy and paste the template code below)
+
+```{r}
+#| label: import data
+
+
+
+```
+
+# Data Wrangling
+
+Find the code you need to prepare or "wrangle" your data to make any calculations needed and combine any datasets you need to combine by looking in the "data_wrangling" folder within the "script_templates" folder. Copy and paste the code you need in the chunk below.
+
+Note, once you have completed this code chunk, you should have a new data frame called my.df that has ONE value per sampleID (each sampleID represents a microhabitat sampled on a particular day). You will then use this new data frame going forward.
+
+```{r}
+#| label: data wrangling
+
+
+
+```
+
+# Data Description
+
+## Summary Table of Sampling Effort
+
+Make a table of the data that you used in your analysis (how many samples and how much area was sampled in each of the groups) to include in the Data Analysis Methods section of your presentation. Go to the "data_description" script templates then look in the folder called "sample_table" and select the correct version of the 'sample_table' script based on which factors you are using and paste that code below.
+
+If you have no factors included, then use the 'sample_table_year.R' script
+
+```{r}
+#| label: tbl-sample-table
+#| tbl-cap: Sample Summary Table
+
+
+
+
+
+
+```
+
+## Data Exploration and Description
+
+Start by exploring the nature of each of your continuous variables to see if it is normally distributed and how you might want to summarize it.
+
+### QQ Plots
+
+Use a QQ plot to see if each continuous variable is normally distributed. Since most groups have at least two continuous variables, there is code for each in the chunk below. If you only have one continuous variable, just delete the second one.
+
+The `color` and `facet.by` functions splits the plots up by any factors you have. If you have no factors, then delete one or both of those lines and the comma from the above line.
+
+Let's start with graphing a QQ Plot of the independent variable(s)
+
+You only need to replace the BLANKS (indicated by underscores) in the code below based on the instructions in the comments
+
+```{r}
+#| label: Independent variable QQ plots 
+
+#make a QQ plot for each independent variable that is continuous
+ggpubr::ggqqplot(
+  data = ___,         #put the data frame name here 
+  "___",              #put the continuous variable name here
+  color = "___",      #put one factor here (remove if no factors)
+  facet.by = "___"    #put another factor here (remove if no factors)
+  )  
+
+#make a QQ plot for the same variable but on a log scale
+#note that we add one to the values before taking the log
+#because you can't take the log of zero
+#if there are no zero values, you can remove the +1
+ggpubr::ggqqplot(
+  data = ___,        #put the data frame name here 
+  "log(___ + 1)",    #put the continuous variable name here
+  color = "___",     #put one factor here (remove if no factors)
+  facet.by = "___"   #put another factor here (remove if no factors)
+  )  
+
+```
+
+If the data on a log scale is fairly similar to the not-logged scale, then just use the normal (not-logged) values for this variable when you graph it.
+
+If the data on the log scale looks closer to a normal distribution (the points are closer to the line), then use the logged values for this variable when you graph it.
+
+Next we will check the dependent variable to see if it is normally distributed by using QQ Plots
+
+```{r}
+#| label: Dependent variable QQ plots 
+
+#make a QQ plot for each dependent variable that is continuous
+ggpubr::ggqqplot(
+  data = ___,         #put the data frame name here 
+  "___",              #put the continuous variable name here
+  color = "___",      #put one factor here (remove if no factors)
+  facet.by = "___"    #put another factor here (remove if no factors)
+  )  
+
+
+#make a QQ plot for the same variable but on a log scale
+#note that we add one to the values before taking the log
+#because you can't take the log of zero
+#if there are no zero values, you can remove the + 1
+ggpubr::ggqqplot(
+  data = ___,         #put the data frame name here 
+  "log(___ + 1)",     #put the continuous variable name here
+  color = "___",      #put one factor here (remove if no factors)
+  facet.by = "___"    #put another factor here (remove if no factors)
+  )  
+
+```
+
+If the data on a log scale is fairly similar to the not-logged scale, then just use the normal (not-logged) values for this variable when you graph it.
+
+If the data on the log scale looks closer to a normal distribution (the points are closer to the line), then use the logged values for this variable when you graph it. (TIP - Density values are almost always better shown on a log-scale for this dataset)
+
+### Descriptive Statistics
+
+Next, we will summarize all the descriptive statistics for each continuous variable so you have all the values in case you need them.
+
+The code is already pasted below, but you can also find this same code in the "script_templates" folder, select "descriptive_stats" then select the "descritive_stats_all.R" script
+
+You only need to replace the BLANKS (indicated by underscores) in the code below based on the instructions in the comments
+
+First let's summarize the continuous independent variable (if you do not have a continuous independent variable, then you can delete this code chunk)
+
+```{r}
+#| label: tbl-descriptive-stats-independent
+#| tbl-cap: Independent Variable Descriptive Statistics - All
+#| include: true
+
+# replace the blank below with a continuous independent variable 
+x.var <- "___" 
+
+# replace the blank below with the name of the dataframe
+indep.sum <- ___  |>  
+  # remove missing values from continuous variables
+  filter(!is.na(.data[[x.var]])) |> 
+  
+  # replace the blank with the categorical variable(s) (aka factors)
+  group_by(___) |> 
+  
+  # calculate the descriptive stats
+  summarize(Mean = mean(.data[[x.var]]), 
+            Median = median(.data[[x.var]]), 
+            SD = sd(.data[[x.var]]), 
+            IQR = IQR(.data[[x.var]]), 
+            Min = min(.data[[x.var]]),
+            Max = max(.data[[x.var]]),
+            Sample.size = n())
+
+indep.sum
+
+```
+
+You should NOT include this full table with unrounded values in your presentation.
+
+You need to decide which values, if any, you want to include and make sure that you round them properly. You can revisit how to round things and which values might be useful to include by going back to what we did during the Introduction to Data Visualization lab (see the [dataviz GitHub repository here](https://github.com/marneypratt/dataviz/blob/master/dataviz.qmd) if you can't find your own copy).
+
+If you would like a formatted table of some of the descriptive statistics, copy the appropriate code from the scripts in "script_templates", "data_description", then "descriptive_stats". If you don't plan on including a formatted table of descriptive statistics in your presentation, you can delete this code chunk.
+
+```{r}
+#| label: tbl-descriptive-stats-independent-formatted
+#| tbl-cap: Independent Variable Descriptive Statistics
+#| include: true
+
+
+
+
+```
+
+Next let's summarize the continuous dependent variable.
+
+```{r}
+#| label: tbl-descriptive-stats-dependent
+#| tbl-cap: Dependent Variable Descriptive Statistics - All
+#| include: true
+
+# replace the blank below with a continuous independent variable 
+x.var <- "___" 
+
+# replace the blank below with the name of the dataframe
+dep.sum <- ___  |>  
+  # remove missing values from continuous variables
+  filter(!is.na(.data[[x.var]])) |> 
+  
+  # replace the blank with the categorical variable(s) (aka factors)
+  group_by(___) |> 
+  
+  # calculate the descriptive stats
+  summarize(Mean = mean(.data[[x.var]]), 
+            Median = median(.data[[x.var]]), 
+            SD = sd(.data[[x.var]]), 
+            IQR = IQR(.data[[x.var]]), 
+            Min = min(.data[[x.var]]),
+            Max = max(.data[[x.var]]),
+            Sample.size = n())
+
+dep.sum
+
+```
+
+Again, you should NOT include this full table with unrounded values in your presentation.
+
+You need to decide which values, if any, you want to include and make sure that you round them properly. You can revisit how to round things and which values might be useful to include by going back to what we did during the Introduction to Data Visualization lab (see the [dataviz GitHub repository here](https://github.com/marneypratt/dataviz/blob/master/dataviz.qmd) if you can't find your own copy).
+
+If you would like a formatted table of some of the descriptive statistics, copy the appropriate code from the scripts in "script_templates", "data_description", then "descriptive_stats". If you don't plan on including a formatted table of descriptive statistics in your presentation, you can delete this code chunk.
+
+```{r}
+#| label: tbl-descriptive-stats-dependent-formatted
+#| tbl-cap: Dependent Variable Descriptive Statistics
+#| include: true
+
+
+
+```
+
+# Data Visualization
+
+Find the code you need to visualize (=graph) your data by looking in the "graphing" folder within the "script_templates" folder. Copy and paste the code you need in the chunk below.
+
+```{r}
+#| label: graph
+
+
+```
+
+To save your graph with the `ggsave()` function, you need to name the resulting file with surrounding " ", and indicate the size via height, width, and units. Don't forget to save the graph with a dpi call at 300-500 to make it nice and crisp! Look at the `ggsave()` help file for more information and options.
+
+Note that the code below will save the most recent graph you made and put it into the "images" folder (make sure to replace the word "Name" for your name within the filename so you will be able to tell which graph is yours later)
+
+```{r}
+#| label: Save your graph
+#| eval: false
+
+
+# save the graph!
+ggsave(filename="images/MacroGraph_Name.png",  #recommended to use.png or .jpg file types
+       height = 5, width = 8, units = "in", 
+       dpi = 300)
+
+```
+
+The above code will save the last graph you made and call it "MacroGraph_Name.png" (make sure you replaced Name with your name. for example: MacroGraph_Pratt.png). This file will appear in the images folder within the project folder under the Files tab in the lower right quadrant of this window.
+
+If you are working on the Smith server, you will first need to export this file to your computer:
+
+-   Check the box next to the "MacroGraph_Name.png" file
+
+-   Go to the "More" menu with the gear icon and click the drop down arrow
+
+-   Select "Export" and then save the file to your computer
+
+You can now insert this graph into your Group Folder and Group Presentation so everyone in your group has access to it.
+
+# Citing R in Your Presentation
+
+When you talk about how you analyzed the data in the Methods section of your presentation, you need to cite how the data were analyzed including (1) any calculations done (for example, how was density calculated?), and (2) what software was used for the analysis.
+
+Here is a detailed explanation of How to Cite R in your Methods.
+
+You need to cite base R but how will you know what version of R you are using?
+
+You should also cite the **most important packages used**.
+
+All of you should cite the {tidyverse} super package since we used {reader}, {dplyr}, and {ggplot2} to import, wrangle, and graph our data. If you used the dot plot in your paper, then you also used {ggbeeswarm} which is NOT part of the {tidyverse} so it needs to be cited separately. (note that it is not necessary to cite {ggpubr} since we just used it for data exploration. It is also not really necessary to cite the {flextable} package since it is only used for formatting tables.)
+
+To properly cite packages, you need to find out the information needed for each package. Run the code below to determine the version of R and packages used. (note that you do NOT need to cite ALL of the packages that the `sessionInfo` function spits out. See above for what you need to cite)
+
+```{r}
+#| label: sessionInfo
+
+sessionInfo()
+
+```
+
+The above is the information you need to cite which version of R as well as any packages you used. While the version number is necessary, you also need more information to cite R and the packages. Refer to [How to Cite R in your Methods](https://docs.google.com/presentation/d/1RG4_R-MDOy1vbMz-M1gfOcMtgqWu9Kvv_R4ex5QdcVk/edit?usp=sharing) to help you figure out how to cite in the text or on slides as well as the full citation in the Literature Cited section at the end.
+
+Use the code below to get more necessary information to cite R itself
+
+```{r}
+#| label: cite R
+
+#citation info for base R 
+citation()
+
+```
+
+Use the code below to cite the {tidyverse} package and then repeat the code replacing "tidyverse" with any other packages you need to cite
+
+```{r}
+#| label: cite tidyverse
+
+#citation info for tidyverse package 
+citation("tidyverse")
+
+```
+
+## Render this File to HTML & Print to PDF
+
+Don't forget to "render" your .qmd file when you are done.
+
+-   Before you Render
+
+    -   Make sure that each code chunk has an unique label name or no name
+
+    -   Save this file and give it the name "macro_analysis_Name.qmd" (replace your name with the "Name" part)
+
+-   Render this Quarto file to HTML (just select the Render menu item at the top of this window)
+
+-   If the HTML file didn't already open in your browser, then click on the name of the file in the Files window and select "View in Web Browser"
+
+-   Once the HTML file is open in your web browser, then use the print function within your browser to save it as a PDF. Please name your PDF file "macro_analysis_Name.pdf" (replace your name with the "Name" part)
+
+-   Make sure the PDF file is saved somewhere on your computer that you can get to
+
+-   Place a copy of the PDF file in your GROUP Google Drive folder for this class
+
+Render straight to HTML, open the HTML file in your browser, and then "print" to a PDF file.
+
+Make sure you add your name to the PDF file name: macro_analysis_Pratt.pdf
+
+Save a copy the PDF in your GROUP FOLDER.
