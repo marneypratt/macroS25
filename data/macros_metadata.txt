@@ -204,12 +204,6 @@ sampleID: unique identification code for each sample.
 	the sampling area where samples were taken. 		
 	https://docs.google.com/presentation/d/112FTHi84gQDcd_78vneF7nzcgPe0D2qoUNOyF4ZxU1M/edit?usp=sharing
 
-
-sampleID.prefix: unique identification code for each sample day. 
-  Makes the sampleID when microhabitat is added.
-
-labelColor: label color used on vials for a particular sample day
-
 microhabitat: there were 5 microhabitats sampled within each location 
   (upstream or downstream) as follows
 	
@@ -243,15 +237,11 @@ microhabitat: there were 5 microhabitats sampled within each location
 	further from the path we come in on), in a realtively fast flow area 
 	just downstream of USH that is sunnier
 
-vial: vial number the organism is stored in
-
 ScientificName: the scientific name the organism was identified to 
   (this is also used to match to the full taxonomic information in the 
   "master.taxa.csv" file)
 
 stage: life stage of the organism (larva, pupa, or adult)
-
-notes: notes from identification
 
 number: number of organisms of that type for that sample on that day
 
@@ -262,18 +252,5 @@ invDens: invertebrate density in number per meter squared.
   Calculated as the number of a particular organism divided by the 
   benthic area that the organism was sampled in.
   
-perSample: percentage of the original sample that was sorted and counted
-  beginning in 2023, some very dense samples were split into a smaller portion 
-  to make the sorting, identifying, and counting more maneagable. This is the 
-  percentage of the original sample that was actually counted 
-  100 - whole orginal sample was counted
-  50 - half of the original sample was counted
-  25 - a quarter of the original sample was counted
-  
-origCount: original count
-  this is the actual number of organisms from the original sample counted. 
-  This value was multiplied by 100/perSample to get the value given in the 
-  number column 
-
 
 see the "master.taxa_metadata.txt" file for the additional variables on taxonomy, tolerance, and FFG

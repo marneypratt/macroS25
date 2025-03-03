@@ -200,11 +200,6 @@ sampleID: unique identification code for each sample.
 	the sampling area where samples were taken. 		
 	https://docs.google.com/presentation/d/112FTHi84gQDcd_78vneF7nzcgPe0D2qoUNOyF4ZxU1M/edit?usp=sharing
 
-
-sampleID.prefix: unique identification code for each sample day. 
-  Makes the sampleID when microhabitat is added.
-
-
 microhabitat: there were 5 microhabitats sampled within each location 
   (upstream or downstream) as follows
 	
@@ -308,24 +303,7 @@ mon.median.discharge: monthly median discharge in cubic feet per second over a
     
     Then the median value was calculated for the 30 days prior to and including 
     the sampling date
-    
-    
-mon.mean.discharge: monthly mean discharge in cubic feet per second over a 
-  30 day period before the sampling date
-
-    The "unit value" discharge in cubic feet per second (parameter 00060) for 
-    USGS site 01171500 MILL RIVER AT NORTHAMPTON, MA was downloaded using 
-    the dataRetrieval r package and the readNWISuv() function. This dataset
-    consists of discharge values taken every 15 minutes
-    
-    Data available here 
-    https://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=01171500
-    Information on using dataRetrieval package 
-    here https://waterdata.usgs.gov/blog/dataretrieval/
-    
-    Then the mean value was calculated for the 30 days prior to and including 
-    the sampling date
-    
+ 
     
 mon.max.turb: the monthly maximum turbidity measured in 
   Nephelometric Turbidity Units (NTU) at the Lamont Bridge monitoring station
@@ -448,27 +426,6 @@ per_rock: the percent of the quadrat that was covered in rocks
 
 per_organic: the percent of the quadrat that was covered in visible organic 
   matter such as leaves and sticks 
-
-
-dateTime.UTC: the date and time in year-month-day hours:minutes:seconds 
-  in the Universal Time Coordinated (UTC) time zone that sampling was started
-
-lat: Latitude coordinate 
-  measured by Vernier's LabQuest 2 
-  (uses WGS84, accruacy: half of data points fall within a radius of 2m)
-	https://www.vernier.com/products/interfaces/labq2/
-
-long: Longitude coordinate 
-  measured by Vernier's LabQuest 2 
-  (uses WGS84, accruacy: half of data points fall within a radius of 2m)
-	https://www.vernier.com/products/interfaces/labq2/
-
-alt: Altitude in meters
-  measured by Vernier's LabQuest 2 
-  (uses WGS84, accruacy: half of data points fall within a radius of 2m) 
-  (note that altitude is no longer recorded because it isn't very accurate or 
-  useful in this case)
-	https://www.vernier.com/products/interfaces/labq2/
 
 pH: the pH 
 	pH was measured using an Oakton pH Testr 50 Waterproof Pocket pH Tester 
@@ -602,19 +559,6 @@ alkalinity: the total alkalinity of a water sample in ppm of CaCO3
   A sample of water was taken from each microhabitat and measured in lab that 
   afternoon (right after sampling) or the next morning
 
-phosphate: the phosphate (PO4) level of a water sample in ppm of (PO4)3- 
-
-  In Fall 2022, phosphate was measured using the Hanna Instruments 
-  High Range Phosphate Colorimeter Checker 
-  (order code: HI717, https://www.hannainst.com/hi717-phosphate-hr.html). 
-  This instrument has a resolution of 0.1 ppm, a range of 0-30ppm, and an 
-  accuracy of ±1.0 ppm or ±5% of reading.
+winter.sediment: The total amount of sediment released during the winter before macroinvertebrate sampling measured in cubic meters. 
   
-  The values were lower than anticipated, so in Summer 2023 we switched to using
-  the Hanna Instruments Low Range Phosphate Colorimeter Checker 
-  (order code: HI713, https://www.hannainst.com/hi713-phosphate-lr.html). 
-  This instrument has a resolution of 0.01 ppm, a range of 0-2.50ppm, and an 
-  accuracy of ±0.04 ppm or ±4% of reading.
-
-  A sample of water was taken from each microhabitat and measured in lab that 
-  afternoon (right after sampling) or the next morning
+  These numbers were obtained from Bob Newton
