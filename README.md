@@ -2,7 +2,7 @@
 
 ### by Marney Pratt
 
-### Last updated on February 23, 2025
+### Last updated on March 15, 2025
 
 This webpage details how to download this project which includes all the files you need to analyze data for your Freshwater Macroinvertebrate Project for Bio 131.
 
@@ -37,9 +37,7 @@ A new session of RStudio will open with the unzipped folder containing all the f
 
 Start by opening the file "macro_analysis.qmd"
 
-Explore the files in the "data" folder to figure out which files you need to import
-
-Use the metadata text files in the "metadata" folder to help you know what is in each data file and what all the variable names mean.
+Use the metadata text files in the "data" folder to help you know what is in each data file and what all the variable names mean.
 
 Copy the code from the various script templates in the "script_templates" folder as needed and paste them in the "macro_analysis.qmd" file.  Replace the blanks in the code as needed.
 
