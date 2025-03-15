@@ -1,6 +1,10 @@
 If you are working on the Smith server, you will first need to export your graph file to your computer:
 
--   Check the box next to the "myGraph.png" file
+-   Go to the Files tab in the lower right window
+
+-   navitage to the results folder
+
+-   Check the box next to the .png file you want
 
 -   Go to the "More" menu with the gear icon and click the drop down arrow
 
