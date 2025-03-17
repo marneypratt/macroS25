@@ -2,7 +2,7 @@
 # make sure you have loaded the ggbeeswarm package to use geom_quasirandom()
 # alternatively, you can use geom_jitter() instead
 
-ggplot(
+box.dot.plot <- ggplot(
   data = ___, #put the data frame name here
   
   #set the aesthetics
@@ -24,23 +24,19 @@ ggplot(
      alpha = 0.5,           #transparency
      width = 0.25) +        #spread
   
-  #adds mean
-  stat_summary(
-    fun = mean,      #graphs the mean
-    geom = "point",  #single point for mean
-    shape = 4,       #shape as X if 4
-    size = 2,        #size
-    color = "black", #color 
-    stroke = 1) +    #line thickness
-  
   #nicer labels (see axis.labels.R script)
   ylab("___") +
   xlab("___") +
+  
+  #changes to log-scale
+  scale_y_log10() +     #changes y-axis to log-scale
+  annotation_logticks(sides = "l") + # adds log-scale tick marks
   
   #additional formatting
   theme_classic(base_size = 16)  +  #sets the font size
   theme(legend.position = "none")   #controls legend/key
 
+box.dot.plot
 
 #see the resources below for some additional options to make a nice plot 
 # https://www.datanovia.com/en/lessons/ggplot-boxplot/

@@ -1,7 +1,4 @@
-
 # this code will make a bar graph with means and standard errors
-
-
 
 #first calculate the mean, sd, & count the observations in each group
 df.sum <- ___ |>             #data frame name here
@@ -13,15 +10,29 @@ df.sum <- ___ |>             #data frame name here
   #calculate the standard error
   mutate(sem = sd/(sqrt(n)))
 
-
 #make bar graph
-ggplot(
-  data=df.sum, 
-  aes(x=___,y=mean))+
-  geom_bar(stat="identity",  width = 0.5, fill = "steelblue")+
-  geom_errorbar(aes(ymin=mean-sem, ymax=mean+sem), width=0.1, size=1) +
+bar.plot <- ggplot(
+  data=df.sum,      #put the factor on the x-axis
+  aes(x = ___,  
+      y = mean,     
+      fill = ___))+  #same factor as x-axis for fill
+  
+  #makes bars
+  geom_bar(stat="identity",  
+           width = 0.5)+
+  
+  #adds error bars
+  geom_errorbar(aes(ymin=mean-sem, ymax=mean+sem), 
+                width=0.1, 
+                size=1) +
+  
+  #nicer labels (see axis.labels.R script)
   ylab("___") +
   xlab("___") +
+  
+  #changes to log-scale
+  scale_y_log10() +     #changes y-axis to log-scale
+  annotation_logticks(sides = "l") + # adds log-scale tick marks
   
   #adjust the second number in xlim to be 
   #0.5 greater than the number of groups in 1st factor
@@ -30,6 +41,7 @@ ggplot(
   theme_classic(base_size=16) +
   theme(legend.position="none")
 
+bar.plot 
 
 #see the resources below for some additional options to make a nice plot 
 # https://www.datanovia.com/en/lessons/ggplot-barplot/

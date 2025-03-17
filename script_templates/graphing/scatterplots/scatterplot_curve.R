@@ -1,15 +1,16 @@
 # this code will make a scatter plot with a curve
-# 
-ggplot(
+
+scatter.plot <- ggplot(
   data = ___, #put the data frame name here
   
   #set the aesthetics
   aes(x = ___,       #independent variable = x
-      y = ___,       #dependent variable = y
-      color = ___)) + #factor 
+      y = ___)) +    #dependent variable = y
   
   #add points
-  geom_point(size = 3) +    #sets the size of the points
+  geom_point(aes(color = ___), #categorical variable
+             size = 3,         #sets the size of the points
+             alpha = 0.5) +    #sets transparency of the points
   
   #add locally weighted smoothing curve
   geom_smooth(method = "loess",       

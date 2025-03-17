@@ -7,7 +7,7 @@ sample_size = ___  |>  #put the data frame name here
   summarize(num = n()) #don't change anything here
 
 #ggplot with sample sizes added
-___  |>    #put the same data frame name here as above
+box.dot.plot <- ___  |>    #put the same data frame name here as above
   
   #joins the dataframe with sample size information
   left_join(sample_size, by = "___")  |>  #same factor as group_by above
@@ -36,16 +36,7 @@ ___  |>    #put the same data frame name here as above
     size = 1,              #size of point
     alpha = 0.5,           #transparency
     width = 0.25) +        #spread
-  
-  #adds mean
-  stat_summary(
-    fun = mean,      #graphs the mean
-    geom = "point",  #single point for mean
-    shape = 4,       #shape as X if 4
-    size = 2,        #size
-    color = "black", #color 
-    stroke = 1) +    #line thickness
-  
+
   #nicer labels (see axis.labels.R script)
   ylab("___") +
   xlab("___") +
@@ -53,6 +44,8 @@ ___  |>    #put the same data frame name here as above
   #additional formatting
   theme_classic(base_size = 16)  +  #sets the font size
   theme(legend.position = "none")   #controls legend/key
+
+box.dot.plot
 
 #see the resources below for some additional options to make a nice plot 
 # https://www.datanovia.com/en/lessons/ggplot-boxplot/

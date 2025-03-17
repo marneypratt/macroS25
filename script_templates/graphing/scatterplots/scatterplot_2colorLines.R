@@ -20,7 +20,6 @@ ggplot(
   xlab("___") +
   labs(color = "___") + #label for the color key
   
-  
   #additional formatting
   theme_classic(base_size = 16)  +  #sets the font size
   theme(legend.position = "top")   #controls legend/key
