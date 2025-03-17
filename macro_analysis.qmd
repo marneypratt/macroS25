@@ -1,0 +1,474 @@
+---
+title: "macro_analysis_NAME"
+subtitle: "BIO 131 Macroinvertebrate Data Analysis"
+author: "Name"
+date: "March , 2025"
+format: 
+  html:
+    code-overflow: wrap
+    embed-resources: true
+---
+
+# Getting Setup
+
+Keep all of your analysis in this same .qmd file and keep all the associated files in the project folder. Make sure the project name is showing in the upper right of the RStudio window.
+
+## Load packages
+
+As always, we will begin by loading all the necessary packages. Run the code chunk below. (note: if you are working on your own desktop version of R and RStudio, make sure that all the packages below have been installed before you run the code to load the packages)
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+suppressPackageStartupMessages(
+  library(tidyverse)) ## for readr, dplyr, ggplot2
+library(ggbeeswarm) ## for jittering points (you can remove this is you did not use a dotplotv)
+library(ggpubr) ## for making QQ-plots and changing the color palette
+library(corrplot) ## for making correlation plots
+library(rstatix) ##for effect sizes
+
+
+```
+
+## Import Data
+
+Run the code below to import all the necessary data and metadata
+
+```{r}
+#| label: import data
+
+env <- read_csv("data/env.csv",
+         col_types = cols(date = col_date(format = "%Y-%m-%d"),
+          
+          location = col_factor(levels = c(
+            "Downstream","Upstream")), 
+          
+          season = col_factor(levels = c("Summer","Fall")), 
+          
+          year = col_factor()
+         )) 
+
+macros <- read_csv("data/macros.csv",
+           col_types = cols(date = col_date(format = "%Y-%m-%d"),
+            
+            location = col_factor(levels = c(
+              "Downstream","Upstream")), 
+            
+            season = col_factor(levels = c("Summer","Fall")), 
+            
+            year = col_factor()
+           )) 
+
+
+master.taxa <- read_csv("data/master.taxa.csv",
+                show_col_types = FALSE)  |>  
+  distinct()
+
+
+
+env_metadata <- read_csv("data/env_variable_metadata.csv", 
+                         show_col_types = FALSE)
+
+macros_metadata <- read_csv("data/macros_variable_metadata.csv",
+                            show_col_types = FALSE)
+
+master.taxa_metadata <- read_csv("data/master.taxa_variable_metadata.csv",
+                                 show_col_types = FALSE)
+
+```
+
+**Reminders:**
+
+To look at the structure of a data frame that was just imported, click on the object name (=name of the data frame) in the Global Environment as a shortcut to using the View() function, and click on the blue arrow next to the data frame in the Global Environment to see all the variable names and types.
+
+A metadata file for each data table was also imported that gives some brief information about the variables. A text file called (with .txt file extension) for each data table is also included in the "data" folder that has a more full description including how to cite the data, what each variable represents, and how measurements were made using what tools.
+
+## Data Wrangling
+
+Below is the code you need to prepare or "wrangle" your data to make calculations and combine datasets needed.
+
+Note, once you have completed this code chunk, you should have a new data frame called my.df that has ONE value per sampleID. You will then use this new data frame going forward.
+
+The only blank you need to replace below is the name of your taxonomic group. See the [Common Macroinvertebrates in the Mill River](https://docs.google.com/spreadsheets/d/1Nx2lG_hmVjnSYoVrqcsj-edlAhr-9bVB4BsktAN_gMI/edit?usp=sharing) and copy the name in the "taxon_group" column for your group. If the name doesn't match exactly, the code will not work.
+
+```{r}
+#| label: data wrangling
+#| message: false
+#| warning: false
+
+##calculate the number of each taxon of interest in each sampleID
+macro.taxa <- macros |> 
+  
+  #join taxonomic information 
+  left_join(master.taxa) |> 
+  
+  # Summarize for each sampleID and taxon 
+  group_by(sampleID, taxon_group, benthicArea) |> 
+  dplyr::summarise(number = sum(number, na.rm = TRUE)) |> 
+  ungroup() |> 
+
+  #filter for taxon of interest
+  #this needs to match what is in the master.taxa file
+  #replace this blank with the taxon you want to keep
+  dplyr::filter(taxon_group == "___")  |> 
+  
+  #calculate the density for your taxon for each sampleID
+  mutate(density = number/benthicArea)
+
+
+#join the macros and env data
+my.df <- left_join(macro.taxa, env) |> 
+  
+    #remove variables that are not needed
+    #(too many zeros or never correlates with much)
+     dplyr::select(-nitrate, -alkalinity, 
+                   -per_sediment, -per_rock, -per_organic,
+                   -mon.max.wTemp, -mon.median.wTemp,
+                   -mon.median.turb, -mon.max.turb) |> 
+  
+    #remove rows with any missing data
+    na.omit() |> 
+  
+    #remove zeros
+    dplyr::filter(density > 0)
+
+```
+
+Note that the way we have "wrangled" this dataset is that each row now equals the values from the same microhabitat sampled on the same day (But note that not all envrionemntal variables were measured at the level of the microhabitat). The density value is the number of all the macroinvertebrates from the indicated taxonomic group collected from a particular microhabitat on a particular day divided by the total benthic area sampled - so the units are number per meter squared.
+
+The way the data are wrangled above only includes when the taxon was present, it does not include all the zeros. We could include the zeros as well, but for most of the data we have here this would cause such a substantial skew (called a zero inflated model) that it becomes difficult to use some of the tools we are using below to analyze the data. So just make sure when you are interpreting the results, that you make it clear that the density values are for when the taxonomic group was present and does not include the zeros.
+
+# Impact of Paradise Pond
+
+How does the presence of Paradise Pond in the Mill River impact your taxonomic group of macroinvertebrates?
+
+## Describing the Data
+
+Let's first get the full set of descriptive statistics for the density of your macroinvertebrate taxonomic group summarized for upstream and downstream of Paradise Pond (tip: use density and location as your variables).
+
+You can refer back to the dataviz Quarto document (or your rendered PDF version) to help remind you how to round the values properly. But also note that for the density variable, rounding to the whole number (the ones place, using digits = 0) is fine in this case even if the SD tells you to round to a higher number.
+
+```{r}
+#| label: rounded descriptive stats
+
+#set the number of digits to round (this blank should be just a number)
+round.digit <- 0
+
+# replace the blank below with a continuous variable of interest
+dep.var <- "___" 
+
+# replace the blank with the cleaned data frame name 
+___  |>  
+
+  # replace the blank with the categorical variable(s)
+  group_by(___) |> 
+  
+  # calculate the descriptive stats
+  # do not place anything in the empty parentheses in the n() 
+    summarize(Sample.size = n(),
+      Min = round(min(.data[[dep.var]]), digits=round.digit),
+      Q1 = round(quantile(.data[[dep.var]], .25), digits=round.digit),
+      Median = round(median(.data[[dep.var]]), digits=round.digit),
+      Q3 = round(quantile(.data[[dep.var]], .75), digits=round.digit),
+      Max = round(max(.data[[dep.var]]), digits=round.digit),
+      Mean = round(mean(.data[[dep.var]]), digits=round.digit),              
+      SD = signif(sd(.data[[dep.var]]), digits=2))
+```
+
+While it is useful to have all these descriptive statistics while you are exploring the data, remember that it is not necessary to report ALL of the values. Think about which, if any, of these values you want your audience to know as values beyond a visual representation. Which of these values should you represent visually and how? (Recall that you should include a measure of central tendency, a measure of dispersion, and indicate the distribution of the data)
+
+Next, let's test whether the density of your taxon is normally distributed.
+
+```{r}
+#| label: QQ plot raw
+
+ggpubr::ggqqplot(
+  data = my.df,    #put the data frame name here 
+  "___",         #put the continuous variable name here
+  facet.by = "___")  #put the categorical variable here
+
+```
+
+Often, the density value is very skewed - are the points lining up close to the line for your data?
+
+Let's compare the untransformed data above to density values that are log-transformed to see if that helps
+
+```{r}
+#| label: QQ plot log
+
+ggpubr::ggqqplot(
+  data = my.df,    #put the data frame name here 
+  "log(___)",         #put the continuous variable name here
+  facet.by = "___")  #put the categorical variable here
+
+```
+
+While the points may not line up perfectly on the line, does the log-transformation make the data more normally distributed? If so, then make sure to graph density on a log-scaled axis.
+
+## Visualization & Effect Size
+
+Now that we have some information from exploring the density values for your taxon, let's graph the density for the upstream and downstream locations and conduct an effect size calculation.
+
+### Visualize the impact of location
+
+First, use what we have learned in this class to choose a graph type that will effectively show how the density of your taxonomic group is impacted by Paradise Pond (comparing the location upstream and downstream of the pond). The graphing code templates can be found in script_templates --\> graphing
+
+```{r}
+#| label: graph comparing by location
+#| warning: false
+
+#paste the code template for the graph type you want below
+
+
+
+
+
+
+
+
+
+#put the object name of your plot in the blank below
+location.plot <- ggpubr::ggpar(___, palette = c("#EE7733", "#0077BB"))
+location.plot
+
+
+# save the graph
+# recommended to use.png or .jpg file types
+ggsave(filename = "results/location.plot.png",  
+       plot = location.plot,   #put the object name of your plot here
+       height = 5, width = 8, units = "in", 
+       dpi = 300)
+
+```
+
+Note that we used the `ggsave()` function to save the graph object you just made to your results folder. See the "export.txt" file in the results folder if you need a reminder of how to export the graph file from the Smith server.
+
+Make sure to insert your graph into your results slides and write a figure legend in the speaker notes (see the assignment handout for more details).
+
+### Calculate the effect size of location
+
+Next, calculate the appropriate effect size.
+
+You can refer back to the dataviz Quarto document (or your rendered PDF version) to help remind you about how to choose the correct effect size test.
+
+```{r}
+#| label: effect size   
+
+#paste the code template for the effect size test you want below
+
+
+
+
+
+
+```
+
+Include your effect size results on your slide with the graph.
+
+# Correlation with Environmental Variables
+
+## Correlation Matrix
+
+Now that we have a sense of how the density of your taxonomic group varies upstream and downstream of Paradise Pond, let's look at how density correlates with several environmental variables. We can use a correlation matrix to look at all the variables at once.
+
+**Optional** - you can check out [An Introduction to corrplot Package](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) for more on making a correlation matrix
+
+```{r}
+#| label: correlation matrix 
+#| warning: false
+
+#convert to matrix style
+my.matrix <- ___  |>   #put the data frame name here
+  
+  #remove unnecessary variables (repeats, non-numeric, etc)
+  dplyr::select(-taxon_group, -benthicArea, -number,
+                -date, -year, -season, -location, -microhabitat) |> 
+  
+  #move sampleID to rownames
+  tibble::column_to_rownames("sampleID") 
+
+#log(x+1) transformation
+#because many of the variables are skewed, 
+#we will log-transform all of them
+#we will use log1p() which first adds one and then takes the log 
+#to avoid taking the log of zero
+log.matrix <- log1p(my.matrix) 
+
+#Perform Pearson's r linear correlation among all variables
+cor.matrix <- cor(log.matrix)
+
+#perform significance test for correlations
+testRes  <-  corrplot::cor.mtest(log.matrix, conf.level = 0.95)
+
+#create a correlation matrix of all variables
+corrplot::corrplot(cor.matrix, 
+                   p.mat = testRes$p, 
+                   method = 'ellipse', 
+                   type = 'upper', 
+                   insig='blank', 
+                   addCoef.col ='black', 
+                   tl.col = 'black',
+                   number.cex = 0.6, 
+                   diag=FALSE)
+
+# save the graph
+png(file = "results/cor.plot.png", 
+    width = 6, height = 8, units = 'in', 
+    res = 300)
+
+#create a correlation matrix of all variables
+cor.plot <- {corrplot(cor.matrix, p.mat = testRes$p, 
+                      method = 'ellipse', type = 'upper', 
+                      insig='blank', 
+                      addCoef.col ='black', tl.col = 'black', 
+                      number.cex = 0.6, diag=FALSE)}
+
+#creates the png file
+dev.off()
+
+
+```
+
+Here we used a few functions from the `corrplot` package to do multiple correlation tests (here we are using Pearson's correlation coefficient, *r*). The output from the `corrplot` function shows each variable compared to each of the other variables. We also used `corrplot::cor.mtest` to determine which correlation coefficients were significant different from zero. The tests where p\>0.05 are left blank (not shown). The value shown in black within each square is Pearson's correlation coefficient (*r*). The colored ellipses in each square represent the direction of the relationship (blue and tilted to the right is a positive relationship, red and tilted to the left is a negative relationship) and the intensity of the color and shape of the ellipse indicate the strength of the correlation (darker colors and skinnier ellipses are stronger correlations).
+
+Note that the code above will save a PNG file of this plot in your results folder. This PNG file may be easier to look at and zoom into rather than looking at the direct output.
+
+First look at the density value for your taxonomic group which should be in the first row. Find the environmental variable(s) that have the strongest correlation to include in your results.
+
+You should also note the environmental variables that are strongly correlated with each other. Usually, water temperature (wTemp) and dissolved oxygen (DO) have a strong negative correlation. This is partly just physics - colder water holds more oxygen. Take note of other strong relationships among the environmental variables and see if you can think of why they might be correlated.
+
+## Strongest Correlation
+
+Let's explore the strongest correlation (or more than one if if you want) from the full correlation matrix.
+
+First let's calculate the descriptive statistics for the environmental variable with the strongest correlation with density of your taxonomic group.
+
+Type "round" in the help window's search box to pull up the details on what number you should put for rounding your numbers (or you can refer back to the dataviz Quarto document (or your rendered PDF version) to help remind you how to round the values properly).
+
+```{r}
+#| label: rounded descriptive stats for environmental variable
+
+#set the number of digits to round 
+round.digit <- ___ #this should be a number
+
+# replace the blank below with a continuous variable of interest
+dep.var <- "___" 
+
+# replace the blank with the cleaned data frame name 
+___  |>  
+
+  # replace the blank with the categorical variable(s)
+  group_by(___) |> 
+  
+  # calculate the descriptive stats
+  # do not place anything in the empty parentheses in the n() 
+    summarize(Sample.size = n(),
+      Min = round(min(.data[[dep.var]]), digits=round.digit),
+      Q1 = round(quantile(.data[[dep.var]], .25), digits=round.digit),
+      Median = round(median(.data[[dep.var]]), digits=round.digit),
+      Q3 = round(quantile(.data[[dep.var]], .75), digits=round.digit),
+      Max = round(max(.data[[dep.var]]), digits=round.digit),
+      Mean = round(mean(.data[[dep.var]]), digits=round.digit),       
+      SD = signif(sd(.data[[dep.var]]), digits=2))
+```
+
+Again, the full set of values is here for your information, but you should not report all of them in your slides. Personally, I think reporting the full range for the environmental variable for each location is particular useful. But think about what your audience might like to know about this variable.
+
+Next, make a graph that shows the density of your taxonomic group and the environmental variable that correlates the most, and include the locations shown in different colors. You can present more than one strong correlation in your results slideshow, but make sure to at least talk about the environmental variable with the strongest correlation with the density of your taxonomic group.
+
+More often then not, it is best to put the density variable on a log-scale. Some, but not all, of the environmental variables are also best viewed on a log-scale. While you cannot take the log of zero, we can use the pseudo-log transformation to handle zeros.
+
+Find the code you need to graph your data by looking in the "graphing" folder within the "script_templates" folder. Copy and paste the code you need in the chunk below.
+
+```{r}
+#| label: strongest correlation graph 
+#| warning: false
+
+#paste the code template for the graph type you want below
+
+
+
+
+
+
+
+#put the object name of your plot in the blank below
+strongest.cor.plot <- ggpubr::ggpar(___, 
+                              palette = c("#EE7733", "#0077BB"))
+strongest.cor.plot 
+
+# save the graph
+# recommended to use.png or .jpg file types
+ggsave(filename = "results/strongest.cor.plot.png",  
+       plot = strongest.cor.plot,   #object name of your plot here
+       height = 5, width = 8, units = "in", 
+       dpi = 300)
+
+```
+
+# R & Package Versions and Citation Information
+
+In addition to citing journal articles and other references, in a full scientific paper you should cite what software was used for the analysis.
+
+While it will not be a requirement to cite R and the packages used in the results slide show, you should have all the packages and their versions in your records (this rendered quarto document will be kept as that record).
+
+Optionally, you can refer to [How to Cite R](https://docs.google.com/presentation/d/1RG4_R-MDOy1vbMz-M1gfOcMtgqWu9Kvv_R4ex5QdcVk/edit?usp=sharing) if you want to know how to cite in the text as well as the full citation in the Literature Cited section at the end of a scientific paper.
+
+Run the code below to get a full record of the version of R and all packages used.
+
+```{r}
+#| label: sessionInfo
+
+sessionInfo()
+
+```
+
+It is good to have a record of the actual citation information for R and the packages used.
+
+Use the code below to get the information to cite R itself
+
+```{r}
+#| label: cite R
+
+#citation info for base R 
+citation()
+
+```
+
+Use the code below to get the citation information for all the major packages used
+
+```{r}
+#| label: citing packages
+
+
+citation("tidyverse")
+citation("ggbeeswarm")
+citation("ggpubr")
+citation("corrplot")
+citation("rstatix")
+
+```
+
+Note that you would need to fix the style of the citations including removing underscores in the titles and capitalizing the titles like a sentence if you were to cite these packages.
+
+# Render this File to HTML & Print to PDF
+
+Don't forget to "render" your .qmd file when you are done.
+
+-   Before you Render
+
+    -   Make sure that each code chunk has an unique label name or no name
+
+    -   Save this file and give it the name "macro_analysis_Name.qmd" (replace your name with the "Name" part)
+
+-   Render this Quarto file to HTML (just select the Render menu item at the top of this window)
+
+-   If the HTML file didn't already open in your browser, then click on the name of the file in the Files window and select "View in Web Browser"
+
+-   Once the HTML file is open in your web browser, then use the print function within your browser to save it as a PDF. Please name your PDF file "macro_analysis_Name.pdf" (replace your name with the "Name" part)
+
+-   Make sure the PDF file is saved somewhere on your computer that you can get to
+
+-   Place a copy of the PDF file in your Google Drive folder for this class
