@@ -15,7 +15,7 @@ scatter.plot <- ggplot(
               alpha = 0.3) +    #sets transparency of the points
   
   #add best fit line
-  geom_smooth(method = "lm", se = FALSE, color = "black") + 
+  geom_smooth(method = "lm", se = TRUE, color = "black") + 
   
   #nicer labels (see axis.labels.R script)
   ylab("___") +

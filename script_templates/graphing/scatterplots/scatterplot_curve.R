@@ -14,7 +14,7 @@ scatter.plot <- ggplot(
   
   #add locally weighted smoothing curve
   geom_smooth(method = "loess",       
-              se = FALSE, 
+              se = TRUE, 
               formula = y ~ x) + 
   
   #nicer labels (see axis.labels.R script)

@@ -13,7 +13,7 @@ ggplot(
   geom_point(size = 3) +    #sets the size of the points
   
   #add best fit line
-  geom_smooth(method = "lm", se = FALSE) + 
+  geom_smooth(method = "lm", se = TRUE) + 
 
   #nicer labels (see axis.labels.R script)
   ylab("___") +
