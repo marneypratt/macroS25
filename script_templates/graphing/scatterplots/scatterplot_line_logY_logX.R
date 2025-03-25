@@ -8,11 +8,10 @@ scatter.plot <- ggplot(
     aes(x = ___,       #independent variable = x
         y = ___)) +    #dependent variable = y
   
-  #add jittered points
-  geom_jitter(aes(color = ___), #categorical variable
-              width = 0.1,
-              size = 3,         #sets the size of the points
-              alpha = 0.3) +    #sets transparency of the points
+  #add points
+  geom_point(aes(color = ___), #categorical variable
+             size = 3,         #sets the size of the points
+             alpha = 0.5) +    #sets transparency of the points
   
   #add best fit line
   geom_smooth(method = "lm", se = TRUE, color = "black") + 
@@ -25,10 +24,8 @@ scatter.plot <- ggplot(
   #change y-axis to log-scale
   scale_y_log10(guide = "axis_logticks") +  
   
-  #changes x-axis to pseudolog-scale
-  scale_x_continuous(transform = 'pseudo_log', 
-                     guide = "axis_logticks",
-                     breaks = c(0, 1, 10, 100, 1000, 10000)) + #change these as needed
+  #change y-axis to log-scale
+  scale_x_log10(guide = "axis_logticks") + 
   
   #additional formatting
   theme_classic(base_size = 16)  +  #sets the font size
