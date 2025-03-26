@@ -91,7 +91,7 @@ Below is the code you need to prepare or "wrangle" your data to make calculation
 
 Note, once you have completed this code chunk, you should have a new data frame called my.df that has ONE value per sampleID. You will then use this new data frame going forward.
 
-The only blank you need to replace below is the name of your taxonomic group. See the [Common Macroinvertebrates in the Mill River](https://docs.google.com/spreadsheets/d/1Nx2lG_hmVjnSYoVrqcsj-edlAhr-9bVB4BsktAN_gMI/edit?usp=sharing) and copy the name in the "taxon_group" column for your group. If the name doesn't match exactly, the code will not work.
+The only blank you need to replace below is the name of your taxonomic group. See the [Common Macroinvertebrates in the Mill River](https://docs.google.com/spreadsheets/d/1Nx2lG_hmVjnSYoVrqcsj-edlAhr-9bVB4BsktAN_gMI/edit?usp=sharing) link and copy the name in the "taxon_group" column for your group. If the name doesn't match exactly, the code will not work. (If you forget which group you are working on, look at the Lab 6 - Macro ID lab entry in your lab notebook).
 
 ```{r}
 #| label: data wrangling
