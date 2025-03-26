@@ -27,14 +27,7 @@ violin.plot <- ggplot(
                    size = 1,         #size
                    alpha = 0.5,      #transparency
                    width = 0.25) +   #spread
-  #adds mean
-  stat_summary(fun = mean,      #graphs the mean
-               geom = "point",  #single point for mean
-               shape = 4,       #shape as X if 4
-               size = 2,        #size
-               color = "black", #color
-               stroke = 1) +    #line thickness
-  
+
   #nicer labels (see axis.labels.R script)
   ylab("___") +
   xlab("___") +
