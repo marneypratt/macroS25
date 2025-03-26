@@ -205,7 +205,7 @@ ggpubr::ggqqplot(
 
 ```
 
-While the points may not line up perfectly on the line, does the log-transformation make the data more normally distributed? If so, then make sure to graph density on a log-scaled axis.
+While the points may not line up perfectly on the line, does the log-transformation make the data more normally distributed? If so, then **make sure to graph density on a log-scaled axis**.
 
 ## Visualization & Effect Size
 
@@ -353,8 +353,9 @@ Type "round" in the help window's search box to pull up the details on what numb
 #set the number of digits to round 
 round.digit <- ___ #this should be a number
 
-# replace the blank below with a continuous variable of interest
-dep.var <- "___" 
+#replace this blank with the continuous variable of interest
+#in this case, it would be the column name of the environmental variable 
+cont.var <- "___" 
 
 # replace the blank with the cleaned data frame name 
 ___  |>  
@@ -365,18 +366,18 @@ ___  |>
   # calculate the descriptive stats
   # do not place anything in the empty parentheses in the n() 
     summarize(Sample.size = n(),
-      Min = round(min(.data[[dep.var]]), digits=round.digit),
-      Q1 = round(quantile(.data[[dep.var]], .25), digits=round.digit),
-      Median = round(median(.data[[dep.var]]), digits=round.digit),
-      Q3 = round(quantile(.data[[dep.var]], .75), digits=round.digit),
-      Max = round(max(.data[[dep.var]]), digits=round.digit),
-      Mean = round(mean(.data[[dep.var]]), digits=round.digit),       
-      SD = signif(sd(.data[[dep.var]]), digits=2))
+      Min = round(min(.data[[cont.var]]), digits=round.digit),
+      Q1 = round(quantile(.data[[cont.var]], .25), digits=round.digit),
+      Median = round(median(.data[[cont.var]]), digits=round.digit),
+      Q3 = round(quantile(.data[[cont.var]], .75), digits=round.digit),
+      Max = round(max(.data[[cont.var]]), digits=round.digit),
+      Mean = round(mean(.data[[cont.var]]), digits=round.digit),       
+      SD = signif(sd(.data[[cont.var]]), digits=2))
 ```
 
-Again, the full set of values is here for your information, but you should not report all of them in your slides. Personally, I think reporting the full range for the environmental variable for each location is particular useful. But think about what your audience might like to know about this variable.
+Again, the full set of values is here for your information, but you should not report all of them in your slides. Personally, I think reporting the full range for the environmental variable for each location is particular useful. But think about what your audience might like to know about this variable during a presentation (taking in a lot of numbers during a presentation is challenging, so I tend to use fewer numbers and instead show more visuals)
 
-Next, make a graph that shows the density of your taxonomic group and the environmental variable that correlates the most, and include the locations shown in different colors. You can present more than one strong correlation in your results slideshow, but make sure to at least talk about the environmental variable with the strongest correlation with the density of your taxonomic group.
+Next, make a graph that shows the **density of your taxonomic group** and the **environmental variable that correlates the most**, and include the locations shown in different colors. You can present more than one strong correlation in your results slideshow, but make sure to at least talk about the environmental variable with the strongest correlation with the density of your taxonomic group.
 
 More often then not, it is best to put the density variable on a log-scale. Some, but not all, of the environmental variables are also best viewed on a log-scale. While you cannot take the log of zero, we can use the pseudo-log transformation to handle zeros.
 
